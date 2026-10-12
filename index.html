@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandarin Quiz Unit 4 - 外面在刮风呢!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#FF85A1',
+                            yellow: '#FFD166',
+                            blue: '#4EA8DE',
+                            green: '#06D6A0',
+                            purple: '#9B5DE5',
+                            dark: '#2B2D42'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        hanzi: ['"Noto Sans SC"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans SC', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .hanzi-text {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        /* Printable Certificate Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                display: block !important;
+                background: #fff !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .animate-bounce-short {
+            animation: bounce 0.6s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4EA8DE;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-pink-100 to-yellow-100 min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden select-none">
+
+    <header class="no-print bg-white/80 backdrop-blur-md shadow-md p-4 sticky top-0 z-30 flex justify-between items-center border-b-4 border-brand-yellow">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-brand-pink flex items-center justify-center text-white font-bold text-xl shadow">
+                🌸
+            </div>
+            <div>
+                <h1 class="font-bold text-lg md:text-xl text-brand-dark flex items-center gap-2">
+                    <span>Meihua 4 Unit 4</span>
+                    <span class="text-xs bg-brand-blue/20 text-brand-blue px-2 py-0.5 rounded-full hanzi-text">外面在刮风呢!</span>
+                </h1>
+                <p class="text-xs text-gray-500">Kuis Mandarin Interaktif Kelas 4 SD</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="sound-toggle" onclick="toggleSound()" class="p-2.5 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition shadow-sm" title="Toggle Suara">
+                <i id="sound-icon" class="fas fa-volume-up text-lg"></i>
+            </button>
+            <button onclick="openAdminModal()" class="p-2.5 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition shadow-sm" title="Panel Guru / Admin">
+                <i class="fas fa-user-shield text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 max-w-4xl flex-1 flex flex-col justify-center">
+
+        <!-- REGISTRATION SCREEN -->
+        <div id="view-register" class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-brand-blue max-w-lg mx-auto w-full relative overflow-hidden transition-all duration-300">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-yellow/30 rounded-full blur-xl pointer-events-none"></div>
+            <div class="text-center mb-6">
+                <div class="inline-block p-4 bg-brand-blue/10 rounded-full mb-3 text-brand-blue text-4xl">
+                    ✏️
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold text-brand-dark">Selamat Datang!</h2>
+                <p class="text-sm text-gray-500 mt-1">Masukkan nama dan kelasmu untuk memulai kuis Mandarin.</p>
+            </div>
+
+            <form id="form-register" onsubmit="startQuiz(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap Siswa</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" id="input-name" required placeholder="Contoh: Budi Santoso"
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none font-semibold transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kelas (Isi Manual)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <i class="fas fa-school"></i>
+                        </span>
+                        <input type="text" id="input-class" required placeholder="Contoh: 4A / Kelas 4 SD B"
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none font-semibold transition">
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <span class="text-xs text-gray-400 self-center">Pilihan cepat:</span>
+                        <button type="button" onclick="setQuickClass('4A')" class="px-2.5 py-1 text-xs bg-gray-100 hover:bg-brand-blue/10 rounded-lg text-gray-600 transition">4A</button>
+                        <button type="button" onclick="setQuickClass('4B')" class="px-2.5 py-1 text-xs bg-gray-100 hover:bg-brand-blue/10 rounded-lg text-gray-600 transition">4B</button>
+                        <button type="button" onclick="setQuickClass('4C')" class="px-2.5 py-1 text-xs bg-gray-100 hover:bg-brand-blue/10 rounded-lg text-gray-600 transition">4C</button>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-3 text-xs text-yellow-800 flex items-start gap-2">
+                    <i class="fas fa-shield-alt text-yellow-600 mt-0.5"></i>
+                    <span><strong>Aturan Anti-Curang:</strong> Jangan membuka tab lain atau menggunakan Google Translate selama kuis berlangsung!</span>
+                </div>
+
+                <button type="submit" 
+                    class="w-full py-4 bg-brand-green hover:bg-emerald-500 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transform active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>Mulai Kuis Now!</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- QUIZ ACTIVE SCREEN -->
+        <div id="view-quiz" class="hidden bg-white rounded-3xl p-4 md:p-8 shadow-2xl border-4 border-brand-purple relative">
+            <!-- Top Quiz Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-gray-100 pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-bold text-xs md:text-sm flex items-center gap-1">
+                        <i class="fas fa-tasks"></i>
+                        <span id="quiz-section-title">Bagian 1</span>
+                    </div>
+                    <span class="text-xs md:text-sm font-semibold text-gray-500" id="quiz-progress-text">Soal 1 dari 10</span>
+                </div>
+
+                <!-- Timer Indicator -->
+                <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 px-3 py-1.5 rounded-full font-bold text-xs md:text-sm shadow-sm" id="timer-box">
+                    <i class="fas fa-clock animate-pulse"></i>
+                    <span id="timer-display">120s</span>
+                </div>
+            </div>
+
+            <!-- Quiz Content Container -->
+            <div id="quiz-question-container" class="space-y-6">
+                <!-- Dynamically Rendered Questions Here -->
+            </div>
+
+            <!-- Bottom Control Bar -->
+            <div class="mt-8 pt-4 border-t-2 border-gray-100 flex justify-between items-center">
+                <div class="text-xs text-gray-400">
+                    *Semua pilihan & urutan soal diacak otomatis
+                </div>
+                <button id="btn-next-question" onclick="nextQuestion()" 
+                    class="px-6 py-3 bg-brand-blue hover:bg-blue-600 text-white font-bold rounded-2xl shadow-md active:scale-95 transition flex items-center gap-2">
+                    <span>Lanjut</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="view-result" class="hidden bg-white rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-brand-yellow text-center max-w-xl mx-auto relative overflow-hidden">
+            <div id="result-badge-icon" class="text-6xl mb-2 animate-bounce">🏆</div>
+            <h2 class="text-3xl font-extrabold text-brand-dark mb-1" id="result-heading">Kuis Selesai!</h2>
+            <p class="text-sm text-gray-500 mb-4" id="result-subheading">Berikut adalah hasil pencapaian kuis Mandarin kamu:</p>
+
+            <!-- Score Box -->
+            <div class="bg-gradient-to-r from-yellow-100 via-pink-100 to-purple-100 rounded-3xl p-6 mb-6 shadow-inner border border-white/60">
+                <p class="text-xs uppercase tracking-wider font-bold text-gray-500 mb-1">Skor Akhir Kamu</p>
+                <div class="text-5xl md:text-6xl font-black text-brand-dark my-2" id="result-score-text">100</div>
+                <div class="flex justify-center gap-4 text-xs font-semibold text-gray-600 mt-2">
+                    <span id="result-correct-count" class="text-emerald-600"><i class="fas fa-check-circle"></i> 0 Benar</span>
+                    <span id="result-wrong-count" class="text-rose-600"><i class="fas fa-times-circle"></i> 0 Salah</span>
+                </div>
+            </div>
+
+            <!-- Score Details Breakdowns -->
+            <div class="space-y-2 text-left mb-6 text-sm bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Siswa:</span>
+                    <span class="font-bold" id="result-student-name">-</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Kelas:</span>
+                    <span class="font-bold" id="result-student-class">-</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Pelanggaran:</span>
+                    <span class="font-bold text-red-500" id="result-violation-count">0x</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button id="btn-print-cert" onclick="openCertificateModal()" class="hidden flex-1 py-3.5 bg-brand-purple hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fas fa-award text-yellow-300 text-xl"></i>
+                    <span>Cetak Piagam (Full Score!)</span>
+                </button>
+                <button onclick="resetToHome()" class="flex-1 py-3.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-2xl shadow transition flex items-center justify-center gap-2">
+                    <i class="fas fa-redo"></i>
+                    <span>Ulangi Kuis</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CERTIFICATE MODAL & PRINT CONTAINER -->
+    <div id="modal-certificate" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-4 md:p-6 shadow-2xl relative my-8">
+            <button onclick="closeCertificateModal()" class="no-print absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl">
+                &times;
+            </button>
+
+            <!-- Certificate Printable Template -->
+            <div id="printable-certificate" class="border-8 border-yellow-400 p-6 md:p-10 rounded-2xl bg-gradient-to-br from-amber-50 via-white to-yellow-50 text-center relative overflow-hidden shadow-xl">
+                <!-- Decorative Corner Patterns -->
+                <div class="absolute top-2 left-2 text-3xl opacity-30">🌸</div>
+                <div class="absolute top-2 right-2 text-3xl opacity-30">🌸</div>
+                <div class="absolute bottom-2 left-2 text-3xl opacity-30">🎋</div>
+                <div class="absolute bottom-2 right-2 text-3xl opacity-30">🎋</div>
+
+                <!-- Header -->
+                <div class="text-center space-y-1 mb-6">
+                    <p class="text-xs uppercase tracking-widest text-amber-600 font-bold">SD MEIHUA MANDARIN ACADEMY</p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-amber-800 tracking-wide">PIAGAM PENGHARGAAN</h1>
+                    <p class="text-sm font-semibold text-gray-500">Certificate of Excellent Achievement</p>
+                    <div class="w-24 h-1 bg-yellow-400 mx-auto mt-2 rounded-full"></div>
+                </div>
+
+                <p class="text-sm text-gray-600">Diberikan dengan bangga kepada siswa hebat:</p>
+                <h2 class="text-2xl md:text-3xl font-black text-brand-dark my-2 border-b-2 border-dashed border-amber-300 inline-block px-6 py-1" id="cert-student-name">
+                    Nama Siswa
+                </h2>
+                <p class="text-sm font-semibold text-gray-600 mt-1">Kelas: <span id="cert-student-class">4A</span></p>
+
+                <p class="text-sm text-gray-600 mt-6 max-w-md mx-auto">
+                    Atas keahlian luar biasa dan pencapaian <strong>NILAI SEMPURNA (100)</strong> dalam menyelesaikan Kuis Mandarin Unit 4:
+                    <br><span class="hanzi-text font-bold text-lg text-amber-900 mt-1 inline-block">《外面在刮风呢!》</span>
+                </p>
+
+                <!-- Badge & Date Section -->
+                <div class="mt-8 flex justify-around items-center pt-6 border-t border-amber-200">
+                    <div class="text-left text-xs text-gray-500">
+                        <p>Tanggal: <span id="cert-date" class="font-bold text-gray-700">12 Oktober 2026</span></p>
+                        <p>Status: <span class="font-bold text-emerald-600">LULUS PERFECT SCORE</span></p>
+                    </div>
+
+                    <div class="w-20 h-20 bg-yellow-400 rounded-full border-4 border-yellow-200 flex items-center justify-center text-white font-bold text-2xl shadow-md rotate-12">
+                        🌟 100
+                    </div>
+
+                    <div class="text-right text-xs text-gray-500">
+                        <div class="w-24 border-b border-gray-400 mb-1 mx-auto"></div>
+                        <p class="font-bold text-gray-700">Guru Bahasa Mandarin</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="no-print mt-6 flex justify-end gap-3">
+                <button onclick="window.print()" class="px-6 py-3 bg-brand-green hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                    <i class="fas fa-print"></i>
+                    <span>Cetak Sekarang</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MODAL -->
+    <div id="modal-admin" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl">
+                &times;
+            </button>
+
+            <!-- Password Form -->
+            <div id="admin-login-view" class="space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Login Panel Guru</h3>
+                    <p class="text-xs text-gray-500">Masukkan kata sandi guru untuk melihat hasil siswa.</p>
+                </div>
+                <input type="password" id="admin-pass-input" placeholder="Password (default: 6688)"
+                    class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 outline-none font-semibold text-center tracking-widest text-lg">
+                <button onclick="checkAdminPass()" class="w-full py-3 bg-brand-purple hover:bg-purple-700 text-white font-bold rounded-xl shadow transition">
+                    Masuk Admin
+                </button>
+            </div>
+
+            <!-- Admin Dashboard Content -->
+            <div id="admin-dashboard-view" class="hidden space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-clipboard-list text-purple-600 mr-2"></i> Rekap Nilai Siswa</h3>
+                    <button onclick="clearLeaderboard()" class="text-xs bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 rounded-lg font-bold transition">
+                        <i class="fas fa-trash mr-1"></i> Hapus Semua Data
+                    </button>
+                </div>
+
+                <div class="max-h-80 overflow-y-auto custom-scrollbar border rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs md:text-sm">
+                        <thead class="bg-gray-100 sticky top-0 text-gray-600 font-bold">
+                            <tr>
+                                <th class="p-2.5">Nama</th>
+                                <th class="p-2.5">Kelas</th>
+                                <th class="p-2.5">Skor</th>
+                                <th class="p-2.5">Curang</th>
+                                <th class="p-2.5">Waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-gray-100 font-semibold">
+                            <!-- Dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHEAT WARNING MODAL -->
+    <div id="modal-cheat-warning" class="fixed inset-0 bg-red-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-4 border-red-500 animate-bounce-short">
+            <div class="text-5xl text-red-500 mb-3">⚠️</div>
+            <h3 class="text-2xl font-black text-red-600 mb-2">Peringatan Kecurangan!</h3>
+            <p class="text-sm text-gray-600 mb-4" id="cheat-warning-msg">
+                Terdeteksi mencoba berpindah tab atau menggunakan penterjemah otomatis. Kuis akan dibatalkan/dikumpulkan otomatis jika diulangi!
+            </p>
+            <button onclick="closeCheatWarning()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow transition">
+                Saya Mengerti & Mengaku Salah
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           AUDIO SYNTHESIZER (Web Audio API - Sound Generator)
+           ========================================================================== */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playTone(freq, type, duration, delay = 0) {
+                if (!this.enabled) return;
+                this.init();
+                setTimeout(() => {
+                    try {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = type;
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start();
+                        osc.stop(this.ctx.currentTime + duration);
+                    } catch (e) {}
+                }, delay);
+            }
+
+            correct() {
+                this.playTone(523.25, 'triangle', 0.15, 0);   // C5
+                this.playTone(659.25, 'triangle', 0.15, 100); // E5
+                this.playTone(783.99, 'triangle', 0.25, 200); // G5
+            }
+
+            wrong() {
+                this.playTone(220, 'sawtooth', 0.2, 0);   // A3
+                this.playTone(207.65, 'sawtooth', 0.3, 150); // G#3
+            }
+
+            click() {
+                this.playTone(400, 'sine', 0.05, 0);
+            }
+
+            fanfare() {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((n, idx) => {
+                    this.playTone(n, 'triangle', 0.3, idx * 150);
+                });
+            }
+        }
+
+        const audio = new SoundFX();
+
+        function toggleSound() {
+            audio.enabled = !audio.enabled;
+            const icon = document.getElementById('sound-icon');
+            if (audio.enabled) {
+                icon.className = "fas fa-volume-up text-lg";
+            } else {
+                icon.className = "fas fa-volume-mute text-lg text-gray-400";
+            }
+        }
+
+        /* ==========================================================================
+           DATA SOAL MEIHUA 4 UNIT 4 (外面在刮风呢!)
+           ========================================================================== */
+        
+        // 1. ISIAN SINGKAT (Fill-in) - 5 Soal
+        const rawFillQuestions = [
+            { id: 'f1', type: 'fill', question: '外面在刮_____呢！', answer: '风' },
+            { id: 'f2', type: 'fill', question: '天空中下着_____雨。', answer: '大' },
+            { id: 'f3', type: 'fill', question: '今天天气很_____，适合出去玩。', answer: '好' },
+            { id: 'f4', type: 'fill', question: '冬天太冷了，可能会下_____。', answer: '雪' },
+            { id: 'f5', type: 'fill', question: '太阳出来了，今天是_____天。', answer: '晴' }
+        ];
+
+        // 2. MENJODOHKAN (Matching) - 5 Soal
+        const rawMatchQuestions = [
+            { id: 'm1', type: 'match', pairs: [
+                { hanzi: '刮风', target: 'guā fēng' },
+                { hanzi: '下雨', target: 'xià yǔ' },
+                { hanzi: '晴天', target: 'qíng tiān' },
+                { hanzi: '阴天', target: 'yīn tiān' },
+                { hanzi: '下雪', target: 'xià xuě' }
+            ]}
+        ];
+
+        // 3. PILIHAN GANDA (Multiple Choice) - 5 Soal
+        const rawMcqQuestions = [
+            { id: 'mc1', type: 'mcq', question: '“刮风”的意思是？', options: ['Berangin', 'Hujan', 'Cerah', 'Berawan'], answer: 0 },
+            { id: 'mc2', type: 'mcq', question: '“下雨”的意思是？', options: ['Berangin', 'Hujan', 'Salju', 'Dingin'], answer: 1 },
+            { id: 'mc3', type: 'mcq', question: '“晴天”的意思是？', options: ['Mendung', 'Cuaca Cerah', 'Hujan Lebat', 'Banjir'], answer: 1 },
+            { id: 'mc4', type: 'mcq', question: '“外面”的反义词（Opposite）是？', options: ['里面', '上面', '下面', '前面'], answer: 0 },
+            { id: 'mc5', type: 'mcq', question: '“天气”的意思是？', options: ['Udara', 'Musim', 'Cuaca', 'Langit'], answer: 2 }
+        ];
+
+        // 4. MENYUSUN KALIMAT (Sentence Rearrangement) - 10 Soal (New Requirement)
+        const rawSentenceQuestions = [
+            { id: 's1', type: 'sentence', blocks: ['外面', '在', '刮风', '呢'], correct: ['外面', '在', '刮风', '呢'] },
+            { id: 's2', type: 'sentence', blocks: ['今天', '天气', '很好'], correct: ['今天', '天气', '很好'] },
+            { id: 's3', type: 'sentence', blocks: ['天空中', '下着', '大雨'], correct: ['天空中', '下着', '大雨'] },
+            { id: 's4', type: 'sentence', blocks: ['我们', '不能', '出去', '玩'], correct: ['我们', '不能', '出去', '玩'] },
+            { id: 's5', type: 'sentence', blocks: ['明天', '会', '下雪', '吗'], correct: ['明天', '会', '下雪', '吗'] },
+            { id: 's6', type: 'sentence', blocks: ['里面', '很', '温暖'], correct: ['里面', '很', '温暖'] },
+            { id: 's7', type: 'sentence', blocks: ['阴天', '没有', '太阳'], correct: ['阴天', '没有', '太阳'] },
+            { id: 's8', type: 'sentence', blocks: ['刮风', '了', '快', '回家'], correct: ['刮风', '了', '快', '回家'] },
+            { id: 's9', type: 'sentence', blocks: ['妹妹', '喜欢', '晴天'], correct: ['妹妹', '喜欢', '晴天'] },
+            { id: 's10', type: 'sentence', blocks: ['现在', '外面', '冷', '不冷'], correct: ['现在', '外面', '冷', '不冷'] }
+        ];
+
+        /* ==========================================================================
+           GLOBAL STATE MANAGEMENT
+           ========================================================================== */
+        let studentData = { name: '', class: '', violations: 0 };
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let scoreCounter = 0;
+        let timerInterval = null;
+        let timeLeft = 120;
+        let selectedSentenceBlocks = [];
+
+        // Helper: Utility Shuffle Array
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function setQuickClass(val) {
+            document.getElementById('input-class').value = val;
+            audio.click();
+        }
+
+        /* ==========================================================================
+           QUIZ LIFECYCLE & INITIALIZATION
+           ========================================================================== */
+        function startQuiz(e) {
+            e.preventDefault();
+            audio.click();
+
+            const nameInput = document.getElementById('input-name').value.trim();
+            const classInput = document.getElementById('input-class').value.trim();
+
+            if (!nameInput || !classInput) return;
+
+            studentData.name = nameInput;
+            studentData.class = classInput;
+            studentData.violations = 0;
+
+            // Prepare & Randomize Questions for All Rounds
+            prepareQuestions();
+
+            // Switch Screen
+            document.getElementById('view-register').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+
+            currentQuestionIndex = 0;
+            scoreCounter = 0;
+
+            renderQuestion();
+            startTimer(120); // 120 Seconds global timer for the quiz
+        }
+
+        function prepareQuestions() {
+            activeQuestions = [];
+
+            // 1. Shuffle and pick Fill-in questions
+            const shuffledFill = shuffleArray(rawFillQuestions);
+            
+            // 2. Prepare Matching (Shuffle pairs inside)
+            const matchQ = JSON.parse(JSON.stringify(rawMatchQuestions[0]));
+            matchQ.pairsLeft = shuffleArray(matchQ.pairs.map(p => p.hanzi));
+            matchQ.pairsRight = shuffleArray(matchQ.pairs.map(p => p.target));
+
+            // 3. Shuffle MCQ questions & their options
+            const shuffledMcq = shuffleArray(rawMcqQuestions).map(q => {
+                const opts = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.answer }));
+                const shuffledOpts = shuffleArray(opts);
+                return {
+                    ...q,
+                    shuffledOptions: shuffledOpts
+                };
+            });
+
+            // 4. Shuffle Sentence Rearrangement questions & blocks
+            const shuffledSentences = shuffleArray(rawSentenceQuestions).map(q => {
+                return {
+                    ...q,
+                    scrambledBlocks: shuffleArray(q.blocks)
+                };
+            });
+
+            // Combine into sequence
+            activeQuestions = [
+                ...shuffledFill,
+                matchQ,
+                ...shuffledMcq,
+                ...shuffledSentences
+            ];
+        }
+
+        /* ==========================================================================
+           TIMER LOGIC
+           ========================================================================== */
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            timeLeft = seconds;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('timer-display');
+            if (timerEl) {
+                timerEl.innerText = `${timeLeft}s`;
+                if (timeLeft <= 15) {
+                    timerEl.parentElement.classList.add('animate-pulse', 'bg-red-200');
+                } else {
+                    timerEl.parentElement.classList.remove('animate-pulse', 'bg-red-200');
+                }
+            }
+        }
+
+        /* ==========================================================================
+           RENDER QUESTIONS DYNAMICALLY
+           ========================================================================== */
+        function renderQuestion() {
+            const container = document.getElementById('quiz-question-container');
+            const sectionTitle = document.getElementById('quiz-section-title');
+            const progressText = document.getElementById('quiz-progress-text');
+
+            const currentQ = activeQuestions[currentQuestionIndex];
+            const totalQ = activeQuestions.length;
+
+            progressText.innerText = `Soal ${currentQuestionIndex + 1} dari ${totalQ}`;
+            container.innerHTML = '';
+
+            // Render based on Question Type
+            if (currentQ.type === 'fill') {
+                sectionTitle.innerText = "Isi Titik-Titik";
+                renderFillQuestion(container, currentQ);
+            } else if (currentQ.type === 'match') {
+                sectionTitle.innerText = "Menjodohkan Hanzi";
+                renderMatchQuestion(container, currentQ);
+            } else if (currentQ.type === 'mcq') {
+                sectionTitle.innerText = "Pilihan Ganda";
+                renderMcqQuestion(container, currentQ);
+            } else if (currentQ.type === 'sentence') {
+                sectionTitle.innerText = "Menyusun Kalimat";
+                renderSentenceQuestion(container, currentQ);
+            }
+        }
+
+        /* 1. FILL QUESTION RENDERER */
+        function renderFillQuestion(container, q) {
+            const html = `
+                <div class="text-center space-y-6">
+                    <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                        <p class="text-sm text-gray-500 mb-2">Lengkapi bagian kalimat yang kosong:</p>
+                        <h3 class="text-2xl md:text-3xl font-bold hanzi-text text-brand-dark">${q.question}</h3>
+                    </div>
+                    <div class="max-w-xs mx-auto">
+                        <input type="text" id="fill-input-answer" placeholder="Tulis Hanzi..." 
+                            class="w-full text-center py-3.5 px-4 rounded-2xl border-2 border-gray-300 focus:border-brand-purple outline-none text-xl font-bold hanzi-text shadow-inner">
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        /* 2. MATCH QUESTION RENDERER */
+        let matchAnswers = {};
+        function renderMatchQuestion(container, q) {
+            matchAnswers = {};
+            let html = `
+                <div class="space-y-4">
+                    <p class="text-xs text-gray-500 text-center">Jodohkan Hanzi di sebelah kiri dengan Pinyin yang sesuai di sebelah kanan:</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-3" id="match-left-col">
+                            ${q.pairsLeft.map((hanzi, i) => `
+                                <div class="bg-gray-50 border-2 border-gray-200 p-3 rounded-2xl font-bold text-center text-lg hanzi-text text-brand-dark shadow-sm">
+                                    ${hanzi}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="space-y-3" id="match-right-col">
+                            ${q.pairsLeft.map((hanzi, i) => `
+                                <select onchange="recordMatch('${hanzi}', this.value)" class="w-full bg-white border-2 border-brand-blue/40 p-3 rounded-2xl font-semibold text-sm outline-none focus:border-brand-blue">
+                                    <option value="">-- Pilih Pinyin --</option>
+                                    ${q.pairsRight.map(pinyin => `<option value="${pinyin}">${pinyin}</option>`).join('')}
+                                </select>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function recordMatch(hanzi, pinyin) {
+            audio.click();
+            matchAnswers[hanzi] = pinyin;
+        }
+
+        /* 3. MCQ QUESTION RENDERER */
+        let selectedMcqIndex = null;
+        function renderMcqQuestion(container, q) {
+            selectedMcqIndex = null;
+            let html = `
+                <div class="space-y-6">
+                    <div class="bg-purple-50 p-5 rounded-2xl border-2 border-purple-200 text-center">
+                        <h3 class="text-xl md:text-2xl font-bold hanzi-text text-brand-dark">${q.question}</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="mcq-options-grid">
+                        ${q.shuffledOptions.map((opt, idx) => `
+                            <button onclick="selectMcqOption(${idx})" id="mcq-opt-${idx}"
+                                class="mcq-btn p-4 rounded-2xl border-2 border-gray-200 hover:border-brand-blue text-left font-semibold text-gray-700 transition flex items-center justify-between">
+                                <span>${opt.text}</span>
+                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs check-circle"></div>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function selectMcqOption(idx) {
+            audio.click();
+            selectedMcqIndex = idx;
+            document.querySelectorAll('.mcq-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = "mcq-btn p-4 rounded-2xl border-2 border-brand-blue bg-blue-50 text-brand-blue font-bold text-left transition flex items-center justify-between shadow-md";
+                } else {
+                    btn.className = "mcq-btn p-4 rounded-2xl border-2 border-gray-200 hover:border-brand-blue text-left font-semibold text-gray-700 transition flex items-center justify-between";
+                }
+            });
+        }
+
+        /* 4. SENTENCE REARRANGEMENT RENDERER (CLICK TO ASSEMBLE) */
+        function renderSentenceQuestion(container, q) {
+            selectedSentenceBlocks = [];
+            let html = `
+                <div class="space-y-6">
+                    <p class="text-xs text-gray-500 text-center">Klik blok kata di bawah untuk menyusun kalimat Mandarin yang benar:</p>
+                    
+                    <!-- Answer Tray Box -->
+                    <div class="bg-amber-50 border-2 border-dashed border-amber-300 min-h-[70px] p-3 rounded-2xl flex flex-wrap items-center justify-center gap-2 shadow-inner" id="sentence-answer-tray">
+                        <span class="text-xs text-amber-400 font-semibold" id="tray-placeholder">Klik blok kata di bawah...</span>
+                    </div>
+
+                    <!-- Available Word Tiles -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 pt-2" id="sentence-words-pool">
+                        ${q.scrambledBlocks.map((block, idx) => `
+                            <button onclick="pickSentenceBlock('${block}', this)" 
+                                class="word-tile bg-white border-2 border-brand-blue text-brand-dark font-extrabold text-xl hanzi-text px-5 py-3 rounded-2xl shadow-md hover:bg-blue-50 active:scale-95 transition">
+                                ${block}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="resetSentenceBlocks()" class="text-xs text-gray-400 hover:text-gray-600 underline">
+                            <i class="fas fa-undo mr-1"></i> Reset Pilihan
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function pickSentenceBlock(word, btnEl) {
+            audio.click();
+            selectedSentenceBlocks.push(word);
+            btnEl.disabled = true;
+            btnEl.classList.add('opacity-30', 'pointer-events-none');
+
+            updateSentenceTray();
+        }
+
+        function removeSentenceBlock(index) {
+            audio.click();
+            const removedWord = selectedSentenceBlocks.splice(index, 1)[0];
+
+            // Re-enable in pool
+            const poolBtns = document.querySelectorAll('#sentence-words-pool button');
+            for (let btn of poolBtns) {
+                if (btn.innerText.trim() === removedWord && btn.disabled) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-30', 'pointer-events-none');
+                    break;
+                }
+            }
+
+            updateSentenceTray();
+        }
+
+        function resetSentenceBlocks() {
+            audio.click();
+            selectedSentenceBlocks = [];
+            const poolBtns = document.querySelectorAll('#sentence-words-pool button');
+            poolBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('opacity-30', 'pointer-events-none');
+            });
+            updateSentenceTray();
+        }
+
+        function updateSentenceTray() {
+            const tray = document.getElementById('sentence-answer-tray');
+            if (selectedSentenceBlocks.length === 0) {
+                tray.innerHTML = `<span class="text-xs text-amber-400 font-semibold" id="tray-placeholder">Klik blok kata di bawah...</span>`;
+                return;
+            }
+
+            tray.innerHTML = selectedSentenceBlocks.map((word, idx) => `
+                <button onclick="removeSentenceBlock(${idx})" class="bg-brand-purple text-white font-extrabold text-xl hanzi-text px-4 py-2 rounded-xl shadow-md flex items-center gap-1 hover:bg-purple-700 transition animate-pop">
+                    <span>${word}</span>
+                    <i class="fas fa-times-circle text-xs text-purple-200"></i>
+                </button>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           NEXT QUESTION & EVALUATION LOGIC
+           ========================================================================== */
+        function nextQuestion() {
+            const currentQ = activeQuestions[currentQuestionIndex];
+
+            // Evaluate Current Question
+            let isCorrect = false;
+
+            if (currentQ.type === 'fill') {
+                const inputVal = document.getElementById('fill-input-answer')?.value.trim();
+                if (inputVal === currentQ.answer) {
+                    isCorrect = true;
+                }
+            } else if (currentQ.type === 'match') {
+                let matchAllCorrect = true;
+                currentQ.pairs.forEach(pair => {
+                    if (matchAnswers[pair.hanzi] !== pair.target) {
+                        matchAllCorrect = false;
+                    }
+                });
+                if (matchAllCorrect && Object.keys(matchAnswers).length === currentQ.pairs.length) {
+                    isCorrect = true;
+                }
+            } else if (currentQ.type === 'mcq') {
+                if (selectedMcqIndex !== null && currentQ.shuffledOptions[selectedMcqIndex]?.isCorrect) {
+                    isCorrect = true;
+                }
+            } else if (currentQ.type === 'sentence') {
+                if (selectedSentenceBlocks.length === currentQ.correct.length) {
+                    let sentenceMatch = true;
+                    for (let i = 0; i < currentQ.correct.length; i++) {
+                        if (selectedSentenceBlocks[i] !== currentQ.correct[i]) {
+                            sentenceMatch = false;
+                            break;
+                        }
+                    }
+                    if (sentenceMatch) isCorrect = true;
+                }
+            }
+
+            if (isCorrect) {
+                scoreCounter += 10;
+                audio.correct();
+            } else {
+                audio.wrong();
+            }
+
+            // Move to Next or Finish
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuestions.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        /* ==========================================================================
+           FINISH QUIZ & RESULTS
+           ========================================================================== */
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            // Calculate Final Normalized Score (Max 100)
+            const totalQuestionsCount = activeQuestions.length;
+            const maxPointsPossible = totalQuestionsCount * 10;
+            const finalScorePercentage = Math.round((scoreCounter / maxPointsPossible) * 100);
+
+            // Save Result to LocalStorage Leaderboard
+            saveToLeaderboard({
+                name: studentData.name,
+                class: studentData.class,
+                score: finalScorePercentage,
+                violations: studentData.violations,
+                date: new Date().toLocaleDateString('id-ID')
+            });
+
+            // Display Results View
+            document.getElementById('view-quiz').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+
+            document.getElementById('result-score-text').innerText = finalScorePercentage;
+            document.getElementById('result-student-name').innerText = studentData.name;
+            document.getElementById('result-student-class').innerText = studentData.class;
+            document.getElementById('result-violation-count').innerText = `${studentData.violations}x`;
+
+            const correctCount = Math.round(scoreCounter / 10);
+            document.getElementById('result-correct-count').innerHTML = `<i class="fas fa-check-circle"></i> ${correctCount} Benar`;
+            document.getElementById('result-wrong-count').innerHTML = `<i class="fas fa-times-circle"></i> ${totalQuestionsCount - correctCount} Salah`;
+
+            const btnPrint = document.getElementById('btn-print-cert');
+
+            if (finalScorePercentage === 100) {
+                audio.fanfare();
+                document.getElementById('result-badge-icon').innerText = '🌟';
+                document.getElementById('result-heading').innerText = 'Sempurna! Perfect Score!';
+                document.getElementById('result-subheading').innerText = 'Luar biasa! Kamu menjawab semua pertanyaan dengan benar!';
+                btnPrint.classList.remove('hidden');
+
+                // Trigger Confetti Celebration Animation
+                if (window.confetti) {
+                    confetti({
+                        particleCount: 120,
+                        spread: 80,
+                        origin: { y: 0.6 }
+                    });
+                }
+            } else {
+                document.getElementById('result-badge-icon').innerText = '👏';
+                document.getElementById('result-heading').innerText = 'Kerja Bagus!';
+                document.getElementById('result-subheading').innerText = 'Terus tingkatkan lagi belajarnya ya!';
+                btnPrint.classList.add('hidden');
+            }
+        }
+
+        function resetToHome() {
+            audio.click();
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-register').classList.remove('hidden');
+        }
+
+        /* ==========================================================================
+           CERTIFICATE MODAL & PRINTING
+           ========================================================================== */
+        function openCertificateModal() {
+            audio.click();
+            document.getElementById('cert-student-name').innerText = studentData.name;
+            document.getElementById('cert-student-class').innerText = studentData.class;
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('modal-certificate').classList.remove('hidden');
+        }
+
+        function closeCertificateModal() {
+            audio.click();
+            document.getElementById('modal-certificate').classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           ANTI-CHEAT SYSTEM
+           ========================================================================== */
+        function triggerCheatViolation(reason) {
+            studentData.violations++;
+
+            const warningMsg = document.getElementById('cheat-warning-msg');
+            if (warningMsg) {
+                warningMsg.innerText = `Terdeteksi ${reason}! Peringatan ke-${studentData.violations}. Harap selesaikan kuis secara jujur.`;
+            }
+
+            document.getElementById('modal-cheat-warning').classList.remove('hidden');
+
+            // Force Submit if violations exceeds threshold
+            if (studentData.violations >= 3) {
+                setTimeout(() => {
+                    closeCheatWarning();
+                    finishQuiz();
+                }, 2000);
+            }
+        }
+
+        function closeCheatWarning() {
+            audio.click();
+            document.getElementById('modal-cheat-warning').classList.add('hidden');
+        }
+
+        // Tab Switching / Focus Loss Detection
+        window.addEventListener('blur', () => {
+            const quizView = document.getElementById('view-quiz');
+            if (quizView && !quizView.classList.contains('hidden')) {
+                triggerCheatViolation("meninggalkan tab/layar kuis");
+            }
+        });
+
+        // Block Right-Click Context Menu
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Block Copy/Paste Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        // Detect Google Translate DOM Mutations
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (document.documentElement.classList.contains('translated-ltr') || 
+                    document.documentElement.classList.contains('translated-rtl') ||
+                    document.querySelector('.goog-te-banner-frame')) {
+                    const quizView = document.getElementById('view-quiz');
+                    if (quizView && !quizView.classList.contains('hidden')) {
+                        triggerCheatViolation("penggunaan Google Translate otomatis");
+                    }
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
+
+        /* ==========================================================================
+           ADMIN PANEL & LEADERBOARD MANAGEMENT
+           ========================================================================== */
+        function openAdminModal() {
+            audio.click();
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            document.getElementById('admin-dashboard-view').classList.add('hidden');
+            document.getElementById('admin-pass-input').value = '';
+            document.getElementById('modal-admin').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            audio.click();
+            document.getElementById('modal-admin').classList.add('hidden');
+        }
+
+        function checkAdminPass() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if (pass === "6688") {
+                audio.click();
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-dashboard-view').classList.remove('hidden');
+                loadLeaderboardTable();
+            } else {
+                audio.wrong();
+                alert("Kata sandi salah! Default: 6688");
+            }
+        }
+
+        function saveToLeaderboard(entry) {
+            let data = JSON.parse(localStorage.getItem('mandarin_quiz_scores') || '[]');
+            data.unshift(entry);
+            localStorage.setItem('mandarin_quiz_scores', JSON.stringify(data));
+        }
+
+        function loadLeaderboardTable() {
+            const tbody = document.getElementById('admin-table-body');
+            const data = JSON.parse(localStorage.getItem('mandarin_quiz_scores') || '[]');
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data nilai siswa.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map((row, idx) => `
+                <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                    <td class="p-2.5 font-bold text-gray-800">${row.name}</td>
+                    <td class="p-2.5 text-gray-600">${row.class}</td>
+                    <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${row.score === 100 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
+                            ${row.score}
+                        </span>
+                    </td>
+                    <td class="p-2.5 text-red-500">${row.violations || 0}x</td>
+                    <td class="p-2.5 text-gray-400 text-xs">${row.date || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function clearLeaderboard() {
+            if (confirm("Apakah Anda yakin ingin menghapus seluruh data nilai siswa?")) {
+                localStorage.removeItem('mandarin_quiz_scores');
+                loadLeaderboardTable();
+            }
+        }
+
+        // Initialize Application
+        window.onload = function() {
+            // Sound FX pre-warm
+            console.log("Quiz App Ready.");
+        }
+    </script>
+</body>
+</html>
